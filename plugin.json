@@ -1,0 +1,16 @@
+{
+  "name": "ovi_goal_tracker_board",
+  "version": "2025.11.05",
+  "description": "Ovi Goal and Point Tracker Board",
+  "author": "tsmooth3",
+  "enabled": true,
+
+  "requirements": {
+    "app_version": ">=2025.10.01",
+    "python_dependencies": ["pillow", "requests"]
+  },
+
+  "preserve_files": [
+    "config.json"
+  ]
+}
