@@ -13,7 +13,7 @@
   ],
   "requirements": {
     "app_version": ">=2025.10.01",
-    "python_dependencies": ["pillow", "requests"]
+    "python_dependencies": ["requests"]
   },
 
   "preserve_files": [
