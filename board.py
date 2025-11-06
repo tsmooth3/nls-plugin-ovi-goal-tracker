@@ -6,7 +6,6 @@ import os
 import requests
 
 from PIL import Image
-
 from boards.base_board import BoardBase
 from data.data import Data
 from renderer.matrix import Matrix
@@ -51,12 +50,6 @@ class OviGoals(BoardBase):
         import inspect
         board_file = inspect.getfile(self.__class__)
         return os.path.dirname(os.path.abspath(board_file))
-
-    def _resolve_path(self, path):
-        """Resolve a path relative to the board directory."""
-        if os.path.isabs(path):
-            return path
-        return os.path.join(self.board_dir, path)
 
     # -------- Rendering --------
     def render(self):
@@ -114,7 +107,7 @@ class OviGoals(BoardBase):
 
         if self.matrix.width >= 128:
             debug.info(f"Drawing 128x64 Ovi: {self.board_show_points}")
-            ovi_image = Image.open('assets/images/128ovi_goals.png')
+            ovi_image = Image.open(f'{self.board_dir}/assets/images/128ovi_goals.png')
             self.matrix.draw_image((0,0), ovi_image)
         
             #draw top text        
@@ -124,16 +117,16 @@ class OviGoals(BoardBase):
             self.matrix.draw_text( (52,18), str(goalcount), font=self.font.large, fill=(255,0,0) )
 	    #draw ovi season goals or points
             if expectedGoals > 0:
-                if self.data.config.ovigoals_alt:
+                if self.board_show_points == False:
                     self.matrix.draw_text( (90,15), f"({seasonGoals})", font=self.font.medium, fill=(0,233,233) )
                     self.matrix.draw_text( (90,27), f"*{expectedGoals}", font=self.font.medium, fill=(0,233,233) )
-                    self.board_show_points = False
-                    debug.info(f"Setting data.config.ovigoals_alt: {self.board_show_points}")
+                    self.board_show_points = True
+                    debug.info(f"Setting board_show_points: {self.board_show_points}")
                 else:
                     self.matrix.draw_text( (90,15), "pts:", font=self.font.medium, fill=(0,233,233) )
                     self.matrix.draw_text( (90,27), f"{points}", font=self.font.medium, fill=(0,233,233) )
-                    self.board_show_points = True
-                    debug.info(f"Setting data.config.ovigoals_alt: {self.board_show_points}")
+                    self.board_show_points = False
+                    debug.info(f"Setting board_show_points: {self.board_show_points}")
             else:
                 self.matrix.draw_text( (90,23), f"{points}", font=self.font.medium, fill=(0,233,233) )
 
@@ -145,7 +138,7 @@ class OviGoals(BoardBase):
             # self.matrix.image.save('/home/pi/pbjelly/ovi.png')
         else: 
             debug.info("Drawing 64x32 Ovi")
-            ovi_image = Image.open('assets/images/ovi_goals.png')
+            ovi_image = Image.open(f'{self.board_dir}/assets/images/ovi_goals.png')
             self.matrix.draw_image((0,0), ovi_image)
         
             #draw top text        
