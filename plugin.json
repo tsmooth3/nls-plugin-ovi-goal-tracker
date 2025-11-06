@@ -4,7 +4,13 @@
   "description": "Ovi Goal and Point Tracker Board",
   "author": "tsmooth3",
   "enabled": true,
-
+  "boards": [
+    {
+      "id": "ovi_goal_tracker_board",
+      "class_name": "OviGoals",
+      "module": "board"
+    }
+  ],
   "requirements": {
     "app_version": ">=2025.10.01",
     "python_dependencies": ["pillow", "requests"]
