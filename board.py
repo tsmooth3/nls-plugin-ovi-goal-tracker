@@ -58,8 +58,13 @@ class OviGoals(BoardBase):
         self.matrix.clear()
 
         ovi_uri = 'https://api-web.nhle.com/v1/player/8471214/landing'
+        team_uri = 'https://api-web.nhle.com/v1/club-schedule-season/WSH/now'
         odata = requests.get(ovi_uri)
+        tdata = requests.get(team_uri)
         oparsed = odata.json()
+        tparsed = tdata.json()
+        teamSeasonGames = tparsed.get('games', [])
+        teamGamesLeft = sum(1 for game in teamSeasonGames if game['gameType'] == 2 and game['gameState'] != 'OFF')
         goalcount = oparsed['careerTotals']['regularSeason']['goals']
         points = oparsed['careerTotals']['regularSeason']['points']
         try:
@@ -68,19 +73,21 @@ class OviGoals(BoardBase):
         except:
             seasonGames = 0
             seasonGoals = 0
+        oviGames = teamGamesLeft + seasonGames
         goalpct = 0
         if seasonGames > 0:
             goalpct = seasonGoals / seasonGames
-        expectedGoals = round(82 * goalpct, 1)
+        expectedGoals = round(oviGames * goalpct, 1)
 
         #for testing
         #goalcount = 908
         debug.info(f"Ovi Goals    : {goalcount}")
         debug.info(f"Ovi Points   : {points}")
         debug.info(f"season Goals : {seasonGoals}")
-        debug.info(f"season Games : {seasonGames}")
+        debug.info(f"Games Played : {seasonGames}")
+        debug.info(f"Games Left   : {teamGamesLeft}")
         debug.info(f"goalpct      : {goalpct}")
-        debug.info(f"expected Goals 82 Games : {expectedGoals}")
+        debug.info(f"expected Goals for Games Played + Games Left : {expectedGoals}")
 
         jagr = 767
         howe = 802
@@ -114,18 +121,18 @@ class OviGoals(BoardBase):
             self.matrix.draw_text( (50,2), "OVI GOALS", font=self.font.medium, fill=(255,255,255) )
 
 	    #draw ovi goal count
-            self.matrix.draw_text( (52,18), str(goalcount), font=self.font.large, fill=(255,0,0) )
+            self.matrix.draw_text( (46,18), str(goalcount), font=self.font.large, fill=(255,0,0) )
 	    #draw ovi season goals or points
             if expectedGoals > 0:
-                if self.board_show_points == False:
-                    self.matrix.draw_text( (90,15), f"({seasonGoals})", font=self.font.medium, fill=(0,233,233) )
-                    self.matrix.draw_text( (90,27), f"*{expectedGoals}", font=self.font.medium, fill=(0,233,233) )
-                    self.board_show_points = True
+                if self.board_show_points:
+                    self.matrix.draw_text( (86,15), "pts:", font=self.font.medium, fill=(0,233,233) )
+                    self.matrix.draw_text( (86,27), f"{points}", font=self.font.medium, fill=(0,233,233) )
+                    self.board_show_points = False
                     debug.info(f"Setting board_show_points: {self.board_show_points}")
                 else:
-                    self.matrix.draw_text( (90,15), "pts:", font=self.font.medium, fill=(0,233,233) )
-                    self.matrix.draw_text( (90,27), f"{points}", font=self.font.medium, fill=(0,233,233) )
-                    self.board_show_points = False
+                    self.matrix.draw_text( (86,15), f"{seasonGoals}:{teamGamesLeft}", font=self.font.medium, fill=(0,233,233) )
+                    self.matrix.draw_text( (86,27), f"*{expectedGoals}", font=self.font.medium, fill=(0,233,233) )
+                    self.board_show_points = True
                     debug.info(f"Setting board_show_points: {self.board_show_points}")
             else:
                 self.matrix.draw_text( (90,23), f"{points}", font=self.font.medium, fill=(0,233,233) )
