@@ -1,4 +1,3 @@
-````markdown
 # Ovi Goal Tracker Board
 
 A **Goal Tracking Board** for the [NHL LED Scoreboard](https://github.com/falkyre/nhl-led-scoreboard) that displays Alex Ovechkin's progress towards the all-time NHL goals record.
@@ -123,7 +122,9 @@ The board offers two display modes that can be toggled using the `ovigoals_alt` 
 ## Screenshots
 
 ### Expected Goals Display
-![Expected Goals](assets/images/ovi_expected_goals.png)
+
+![expected goals](assets/images/ovi_expected_goals.png) 
+
 
 ### Points Display
 ![Points](assets/images/ovi_points.png)
@@ -176,4 +177,3 @@ The board supports both 64x32 and 128x64 LED matrix displays:
 - Larger Ovechkin graphic
 
 The board automatically detects your matrix size and adjusts the display accordingly.
-````
