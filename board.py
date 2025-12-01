@@ -113,36 +113,13 @@ class OviGoals(BoardBase):
             countdowntext2 = "+" + str(goalsTo1st * -1 + 1)
 
         if self.matrix.width >= 128:
-            debug.info(f"Drawing 128x64 Ovi: {self.board_show_points}")
-            ovi_image = Image.open(f'{self.board_dir}/assets/images/128ovi_goals.png')
-            self.matrix.draw_image((0,0), ovi_image)
-        
-            #draw top text        
-            self.matrix.draw_text( (50,2), "OVI GOALS", font=self.font.medium, fill=(255,255,255) )
-
-	    #draw ovi goal count
-            self.matrix.draw_text( (46,18), str(goalcount), font=self.font.large, fill=(255,0,0) )
-	    #draw ovi season goals or points
+            # if expected goals are greater than 0, draw the expected goals then draw the points otherwise just the points
             if expectedGoals > 0:
-                if self.board_show_points:
-                    self.matrix.draw_text( (86,15), "pts:", font=self.font.medium, fill=(0,233,233) )
-                    self.matrix.draw_text( (86,27), f"{points}", font=self.font.medium, fill=(0,233,233) )
-                    self.board_show_points = False
-                    debug.info(f"Setting board_show_points: {self.board_show_points}")
-                else:
-                    self.matrix.draw_text( (86,15), f"{seasonGoals}:{teamGamesLeft}", font=self.font.medium, fill=(0,233,233) )
-                    self.matrix.draw_text( (86,27), f"*{expectedGoals}", font=self.font.medium, fill=(0,233,233) )
-                    self.board_show_points = True
-                    debug.info(f"Setting board_show_points: {self.board_show_points}")
+                self.draw_ovi_expected_goals(goalcount, expectedGoals, seasonGoals, teamGamesLeft)
+                self.draw_ovi_points(points, goalcount)
             else:
-                self.matrix.draw_text( (90,23), f"{points}", font=self.font.medium, fill=(0,233,233) )
-
-        
-            #draw bottom text        
-            self.matrix.draw_text( (66,40), str(countdowntext), font=self.font.medium, fill=(255,255,0) )
-            self.matrix.draw_text( (66,51), str(countdowntext2), font=self.font.medium, fill=(255,255,0) )
-            
-            # self.matrix.image.save('/home/pi/pbjelly/ovi.png')
+                self.draw_ovi_points(points, goalcount)
+   
         else: 
             debug.info("Drawing 64x32 Ovi")
             ovi_image = Image.open(f'{self.board_dir}/assets/images/ovi_goals.png')
@@ -156,7 +133,7 @@ class OviGoals(BoardBase):
                 fill=(255,255,255)
             )
 
-	    #draw ovi goal count
+	        #draw ovi goal count
             self.matrix.draw_text(
                 (39,11),
                 str(goalcount),
@@ -171,6 +148,43 @@ class OviGoals(BoardBase):
                 font=self.font,
                 fill=(255,255,255)
             )
+    
+    def draw_ovi_expected_goals(self, goalcount, expectedGoals, seasonGoals, teamGamesLeft):
+        debug.info(f"Drawing 128x64 Ovi Expected Goals")
+        ovi_image = Image.open(f'{self.board_dir}/assets/images/128ovi_goals.png')
+        # draw the ovi image
+        self.matrix.draw_image((0,0), ovi_image)
+        
+        #draw top text        
+        self.matrix.draw_text( (50,2), "OVI GOALS", font=self.font.medium, fill=(255,255,255) )
+        
+        #draw ovi goal count
+        self.matrix.draw_text( (46,18), str(goalcount), font=self.font.large, fill=(255,0,0) )
+        
+        #draw the season goals and games remaining, and expected goals
+        self.matrix.draw_text( (86,15), f"{seasonGoals}:{teamGamesLeft}", font=self.font.medium, fill=(0,233,233) )
+        self.matrix.draw_text( (86,27), f"*{expectedGoals}", font=self.font.medium, fill=(0,233,233) )
 
+        # render the matrix and save the image
         self.matrix.render()
+        self.matrix.image.save(f'{self.board_dir}/assets/images/ovi_expected_goals.png')
+        # wait for 15 seconds
+        self.sleepEvent.wait(15)
+    
+    def draw_ovi_points(self, points, goalcount):
+        debug.info(f"Drawing 128x64 Ovi Career Points")
+        ovi_image = Image.open(f'{self.board_dir}/assets/images/128ovi_goals.png')
+        self.matrix.draw_image((0,0), ovi_image)
+    
+        #draw top text        
+        self.matrix.draw_text( (50,2), "OVI GOALS", font=self.font.medium, fill=(255,255,255) )
+
+        #draw ovi goal count
+        self.matrix.draw_text( (46,18), str(goalcount), font=self.font.large, fill=(255,0,0) )
+        # if expected goals are greater than 0, draw the expected goals then draw the points otherwise just the points
+        self.matrix.draw_text( (86,15), "pts:", font=self.font.medium, fill=(0,233,233) )
+        self.matrix.draw_text( (86,27), f"{points}", font=self.font.medium, fill=(0,233,233) )
+        
+        self.matrix.render()
+        self.matrix.image.save(f'{self.board_dir}/assets/images/ovi_points.png')
         self.sleepEvent.wait(15)
