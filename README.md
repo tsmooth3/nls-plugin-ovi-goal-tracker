@@ -120,6 +120,16 @@ The board offers two display modes that can be toggled using the `ovigoals_alt` 
 
 ---
 
+## Screenshots
+
+### Expected Goals Display
+![Expected Goals](assets/images/ovi_expected_goals.png)
+
+### Points Display
+![Points](assets/images/ovi_points.png)
+
+---
+
 ## Installation
 
 1. Use the NHL Led Scoreboard's plugin manager python script to install:
